@@ -1,6 +1,7 @@
 import { Fragment, useState } from "react";
 import CardProducts from "../components/Fragments/CardProducts";
 import Button from "../components/Elements/button";
+import Counter from "../components/Fragments/Counter";
 
 const products = [
   {
@@ -123,10 +124,25 @@ const ProductsPage = () => {
                   </tr>
                 );
               })}
+              <tr>
+                <td colSpan={3}><b>Total Price</b></td>
+                <td>
+                  <b>{(1000000).toLocaleString("id-ID", {
+                        style: "currency",
+                        currency: "IDR",
+                      })}</b>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
       </div>
+
+      {/* <div className="mt-5 mb-5 flex justify-center">
+        <Counter></Counter>
+      </div> */}
+
+
     </Fragment>
   );
 };
