@@ -1,48 +1,28 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import CardProducts from "../components/Fragments/CardProducts";
 import Button from "../components/Elements/button";
-import Counter from "../components/Fragments/Counter";
-
-const products = [
-  {
-    id: 1,
-    name: "Sepatu Baru",
-    price: 1000000,
-    image: "/images/products-1.jpg",
-    description: ` Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo ducimus
-       ab in nam, neque ex eaque sed ipsum! Illo magni totam nemo commodi
-       atque ullam est odio optio at inventore.`,
-  },
-  {
-    id: 2,
-    name: "Sepatu Baru 2",
-    price: 2000000,
-    image: "/images/products-1.jpg",
-    description: `llo magni totam nemo commodi
-       atque ullam est odio optio at inventore.`,
-  },
-  {
-    id: 3,
-    name: "Sepatu Baru 3",
-    price: 3000000,
-    image: "/images/products-1.jpg",
-    description: ` Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo ducimus
-       ab in nam, neque ex eaque sed ipsum! Illo m`,
-  },
-];
+import { getProducts } from "../services/products.service";
 
 const email = localStorage.getItem("email");
 
 const ProductsPage = () => {
   const [cart, setCart] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     setCart(JSON.parse(localStorage.getItem("cart")) || []);
   }, []); // seperti component didmount
 
+  // get api
   useEffect(() => {
-    if (cart.length > 0) {
+    getProducts((data) => {
+      setProducts(data);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (products.length > 0 && cart.length > 0) {
       const sum = cart.reduce((acc, item) => {
         const product = products.find((product) => product.id === item.id);
         return acc + product.price * item.qty;
@@ -51,7 +31,7 @@ const ProductsPage = () => {
       setTotalPrice(sum);
       localStorage.setItem("cart", JSON.stringify(cart));
     }
-  }, [cart]); // seperti component didUpdate
+  }, [cart, products]); // seperti component didUpdate
 
   const handleLogout = () => {
     localStorage.removeItem("email");
@@ -105,10 +85,10 @@ const ProductsPage = () => {
       </div>
       <div className="flex justify-center py-5">
         <div className="w-4/6 flex flex-wrap">
-          {products.map((product) => (
+          {products.length > 0 && products.map((product) => (
             <CardProducts key={product.id}>
               <CardProducts.Header image={product.image} />
-              <CardProducts.Body name={product.name}>
+              <CardProducts.Body name={product.title}>
                 {product.description}
               </CardProducts.Body>
               <CardProducts.Footer
@@ -131,24 +111,24 @@ const ProductsPage = () => {
               </tr>
             </thead>
             <tbody>
-              {cart.map((item) => {
+              {products.length > 0 && cart.map((item) => {
                 const product = products.find(
                   (product) => product.id === item.id
                 );
                 return (
                   <tr key={item.id}>
-                    <td>{product.name}</td>
+                    <td>{product.title}</td>
                     <td>
                       {product.price.toLocaleString("id-ID", {
                         style: "currency",
-                        currency: "IDR",
+                        currency: "USD",
                       })}
                     </td>
                     <td>{item.qty}</td>
                     <td>
                       {(item.qty * product.price).toLocaleString("id-ID", {
                         style: "currency",
-                        currency: "IDR",
+                        currency: "USD",
                       })}
                     </td>
                   </tr>
@@ -163,9 +143,8 @@ const ProductsPage = () => {
                   <b>
                     {totalPrice.toLocaleString("id-ID", {
                       style: "currency",
-                      currency: "IDR",
+                      currency: "USD",
                     })}
-                  
                   </b>
                 </td>
               </tr>
