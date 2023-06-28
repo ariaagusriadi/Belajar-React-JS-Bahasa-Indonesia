@@ -9,35 +9,47 @@ import ProductsPage from "./Pages/Products";
 import ProfilePage from "./Pages/profilePage";
 import DetailProductPage from "./Pages/detailProduct";
 
+import { Provider } from "react-redux";
+import store from "./redux/store";
+import DarkModeContextProvider from "./context/DarkMode";
+import { TotalPriceProvider } from "./context/TotalPriceContext";
+
 const router = createBrowserRouter([
   {
     path: "/",
     element: <h1>Hello World</h1>,
-    errorElement: <ErrorPage/>
+    errorElement: <ErrorPage />,
   },
   {
     path: "/login",
-    element: <LoginPage/>
+    element: <LoginPage />,
   },
   {
     path: "/register",
-    element: <RegisterPage/>
+    element: <RegisterPage />,
   },
   {
     path: "/products",
-    element: <ProductsPage/>
+    element: <ProductsPage />,
   },
   {
     path: "/profile",
-    element: <ProfilePage/>
-  }, {
+    element: <ProfilePage />,
+  },
+  {
     path: "/product/:id",
-    element: <DetailProductPage/>
-  }
+    element: <DetailProductPage />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router}/>
+    <Provider store={store}>
+      <DarkModeContextProvider>
+        <TotalPriceProvider>
+          <RouterProvider router={router} />
+        </TotalPriceProvider>{" "}
+      </DarkModeContextProvider>
+    </Provider>
   </React.StrictMode>
 );
